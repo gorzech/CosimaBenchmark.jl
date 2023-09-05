@@ -3,6 +3,7 @@ using Cosima
 using CosimaModels
 using BenchmarkTools
 using Dates
+using Pkg
 # Write your package code here
 function run_single_ode_step_benchmark(system_settings)
     sys = create_system(system_settings)
@@ -37,7 +38,7 @@ end
 
 function save_benchmark_group_parameters(suite)
     tune!(suite)
-    BenchmarkTools.save("params.json", params(suite))
+    BenchmarkTools.save(banchmark_params_name(), params(suite))
 end
 
 const Cosima_suite_v1 = Dict("single_pendulum" => NPendulum(),
@@ -63,7 +64,7 @@ end
 
 function run_benchmark_suite_parameters()
     suite = cosima_benchmarkable_suite()
-    loadparams!(suite, BenchmarkTools.load("params.json")[1], :evals, :samples);
+    loadparams!(suite, BenchmarkTools.load(banchmark_params_name())[1], :evals, :samples)
     run(suite)
 end
 
@@ -73,6 +74,21 @@ end
 
 function load_benchmark(file_name)
     BenchmarkTools.load(file_name)
+end
+
+function benchmark_params_name()
+    return "params." * gethostname() * ".json"
+end
+
+function package_version(package_name)
+    first(values(filter(x -> x.second.name == package_name, Pkg.dependencies()))).version
+end
+
+function benchmark_suite_name()
+    version_cosima = string(package_version("Cosima"))
+    version_cosima_models = string(package_version("CosimaModels"))
+    # version_cosima_benchmark = string(package_version("CosimaBenchmark"))
+    return file_friendly_now() * "_B-" * "0.0.1" * "_C-" * version_cosima * "_M-" * version_cosima_models * "_" * gethostname() * ".json"
 end
 
 function file_friendly_now()
