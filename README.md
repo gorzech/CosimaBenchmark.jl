@@ -33,3 +33,40 @@ Package that accompany Cosima.jl and CosimaModels.jl. Created to allow for consi
 
 ### Prepare for benchmarking – setup BenchmarkTools parameters
 
+After the installation and typing `using CosimaBenchmark` you can currently do the following.
+
+1. Get current suite.
+    `suite = CosimaBenchmark.get_benchmarkable_suite()`
+
+2. Tune and save benchmark parameters. 
+    `CosimaBenchmark.save_benchmark_group_parameters!(suite)`
+
+3. Check if there is a new file created.
+
+### Execute the benchmark and save results
+
+When parameters are defined, now it is time to run benchmarks. 
+
+1. Run default benchmark suite with saved parameters:
+    `br = CosimaBenchmark.run_benchmark_suite()`
+
+2. Compute minimum and median times:
+    ```[julia]
+    minbr = minimum(br)
+    using Statistics
+    medbr = median(br)
+    ```
+
+3. Get names to save results:
+    ```[julia]
+    minname = CosimaBenchmark.benchmark_suite_name("minimum")
+    medname = CosimaBenchmark.benchmark_suite_name("median")
+    ```
+
+4. Save results
+    ```[julia]
+    CosimaBenchmark.save_benchmark(minbr, minname)
+    CosimaBenchmark.save_benchmark(medbr, medname)
+    ```
+
+T.B.C.
